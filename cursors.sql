@@ -107,3 +107,26 @@ BEGIN
         || ', NAME: ' || V_EMP_IDS_189.FIRST_NAME);
   END LOOP;
 END;
+
+-- NESTED CURSORS
+DECLARE
+  CURSOR CUR_DEPARTMENT(ROWCOUNT NUMBER DEFAULT 2) IS
+    SELECT *
+    FROM DEPARTMENTS
+    WHERE ROWNUM <= ROWCOUNT;
+  CURSOR CUR_EMPLOYEE(ID EMPLOYEES.DEPARTMENT_ID%TYPE) IS
+    SELECT FIRST_NAME FROM EMPLOYEES where DEPARTMENT_ID = ID;
+BEGIN
+  <<dept>>
+  FOR dept in CUR_DEPARTMENT LOOP
+    dbms_output.put_line('---------------------------------');
+    dbms_output.put_line('Department name: ' || dept.DEPARTMENT_NAME);
+
+    <<employee>>
+    FOR employee IN CUR_EMPLOYEE(DEPT.DEPARTMENT_ID) LOOP
+      dbms_output.put_line('NAME' || employee.FIRST_NAME);
+    END LOOP;
+    dbms_output.put_line('---------------------------------');
+
+  END LOOP;
+END;
